@@ -29,8 +29,10 @@ Updated: 2026-07-23
   verified; simulator and physical-device manipulation still require smoke
   testing.
 - Exact snapping is resolved with renderer-independent `simd` transforms.
-- Drive-surface collision generation and seam behavior are deferred to the
-  Phase 0 collision-loop slice.
+- Drive-surface collision is generated from domain geometry recipes. Automated
+  checks cover loop topology, collision configuration, and seam tolerances;
+  physical-device motion acceptance is recorded in
+  [`CollisionLoopVerification.md`](CollisionLoopVerification.md).
 - GameController discovery, DualSense mappings, disconnect behavior, and
   perceived input latency require the dedicated input slice and physical
   device.

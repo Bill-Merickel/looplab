@@ -14,6 +14,7 @@ nonisolated enum TrackAssemblyError: Error, Equatable {
     case incompatibleSockets
     case occupiedSocket(TrackSocketReference)
     case movingPieceAlreadyConnected(PlacedTrackPiece.ID)
+    case misalignedSockets
     case invalidTransform
     case invalidSnapDistance
 }
@@ -76,9 +77,16 @@ nonisolated struct TrackAssembly: Sendable {
         to destination: TrackSocketReference
     ) throws -> TrackTransform {
         let resolved = try validateConnection(
-            moving: source,
+            source: source,
             to: destination
         )
+        guard !connections.contains(
+            where: { $0.contains(pieceID: source.pieceID) }
+        ) else {
+            throw TrackAssemblyError.movingPieceAlreadyConnected(
+                source.pieceID
+            )
+        }
 
         return TrackSnapResolver.snappedTransform(
             sourceSocket: resolved.sourceSocket,
@@ -113,6 +121,37 @@ nonisolated struct TrackAssembly: Sendable {
         }
 
         pieces[index] = pieces[index].placing(at: transform)
+        connections.append(connection)
+    }
+
+    /// Connects sockets that are already aligned without moving either piece.
+    ///
+    /// This is used to close a loop after its final piece has been snapped into
+    /// place through its other socket.
+    mutating func connectAligned(
+        _ source: TrackSocketReference,
+        to destination: TrackSocketReference,
+        tolerance: TrackSeamTolerance = .phase0
+    ) throws {
+        _ = try validateConnection(source: source, to: destination)
+        let measurement = try TrackSeamInspector.measure(
+            source: source,
+            destination: destination,
+            in: self
+        )
+        guard measurement.isWithin(tolerance) else {
+            throw TrackAssemblyError.misalignedSockets
+        }
+
+        let connection: TrackConnection
+        do {
+            connection = try TrackConnection(
+                source: source,
+                destination: destination
+            )
+        } catch {
+            throw TrackAssemblyError.selfConnection
+        }
         connections.append(connection)
     }
 
@@ -190,7 +229,7 @@ nonisolated struct TrackAssembly: Sendable {
     }
 
     private func validateConnection(
-        moving source: TrackSocketReference,
+        source: TrackSocketReference,
         to destination: TrackSocketReference
     ) throws -> (
         sourcePiece: PlacedTrackPiece,
@@ -214,13 +253,6 @@ nonisolated struct TrackAssembly: Sendable {
         guard !isOccupied(destination) else {
             throw TrackAssemblyError.occupiedSocket(destination)
         }
-        guard !connections.contains(
-            where: { $0.contains(pieceID: source.pieceID) }
-        ) else {
-            throw TrackAssemblyError.movingPieceAlreadyConnected(
-                source.pieceID
-            )
-        }
 
         return (
             sourcePiece,
@@ -230,7 +262,7 @@ nonisolated struct TrackAssembly: Sendable {
         )
     }
 
-    private func resolve(
+    func resolve(
         _ reference: TrackSocketReference
     ) throws -> (PlacedTrackPiece, TrackSocket) {
         guard let piece = piece(withID: reference.pieceID) else {
