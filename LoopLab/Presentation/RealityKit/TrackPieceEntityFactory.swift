@@ -66,8 +66,68 @@ enum TrackPieceEntityFactory {
         return root
     }
 
+    /// Builds the same gray-box presentation with one static collision shape.
+    ///
+    /// The collision recipe is derived from the domain geometry recipe rather
+    /// than from the entity hierarchy, so decorative subdivisions such as the
+    /// start/finish marker cannot introduce collision seams.
+    static func makeCollidableEntity(
+        for definition: TrackPieceDefinition
+    ) async throws -> Entity {
+        let entity = try makeEntity(for: definition)
+        let shape = try await collisionShape(for: definition)
+        let material = PhysicsMaterialResource.generate(
+            staticFriction: 0.35,
+            dynamicFriction: 0.25,
+            restitution: 0
+        )
+
+        entity.components.set(CollisionComponent(shapes: [shape]))
+        entity.components.set(
+            PhysicsBodyComponent(
+                shapes: [shape],
+                mass: 1,
+                material: material,
+                mode: .static
+            )
+        )
+        return entity
+    }
+
     static func entityName(for kind: TrackPieceKind) -> String {
         "track-piece-\(kind.rawValue)"
+    }
+
+    static func collisionShape(
+        for definition: TrackPieceDefinition
+    ) async throws -> ShapeResource {
+        switch definition.geometry {
+        case let .straight(length, deckThickness),
+             let .startFinish(length, deckThickness, _):
+            return ShapeResource.generateBox(
+                size: SIMD3(
+                    definition.laneWidth,
+                    deckThickness,
+                    length
+                )
+            )
+            .offsetBy(
+                translation: SIMD3(0, -deckThickness / 2, 0)
+            )
+
+        case let .leftCurve(
+            centerlineRadius,
+            sweepAngle,
+            deckThickness
+        ):
+            let mesh = try makeCurveMesh(
+                centerlineRadius: centerlineRadius,
+                laneWidth: definition.laneWidth,
+                sweepAngle: sweepAngle,
+                deckThickness: deckThickness
+            )
+            return try await ShapeResource.generateStaticMesh(from: mesh)
+        }
     }
 
     private static var deckMaterial: SimpleMaterial {
