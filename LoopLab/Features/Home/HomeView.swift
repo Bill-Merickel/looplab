@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import GameController
 
 struct HomeView: View {
+    @Environment(AppModel.self) private var appModel
 
     var body: some View {
         VStack(spacing: 24) {
@@ -24,11 +26,24 @@ struct HomeView: View {
                 .multilineTextAlignment(.center)
             }
 
+            Label(
+                appModel.input.connectionDescription,
+                systemImage: appModel.input.connection.isConnected
+                    ? "gamecontroller.fill"
+                    : "gamecontroller"
+            )
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+
             ImmersiveSpaceButton()
                 .buttonStyle(.borderedProminent)
         }
         .frame(maxWidth: 420)
         .padding(40)
+        .handlesGameControllerEvents(
+            matching: .gamepad,
+            withOptions: .receivesEventsInView(false)
+        )
     }
 }
 

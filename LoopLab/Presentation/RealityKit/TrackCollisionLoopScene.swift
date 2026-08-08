@@ -13,10 +13,15 @@ import UIKit
 final class TrackCollisionLoopScene {
     static let rootEntityName = "phase-0-collision-loop"
     static let seamProbeNamePrefix = "seam-probe-"
+    static let controllerInputTargetName = "track-controller-input-target"
+
+    private static let controllerInputPadding: Float = 0.35
+    private static let controllerInputThickness: Float = 0.02
 
     let root: Entity
     let trackEntities: [Entity]
     let seamProbes: [Entity]
+    let controllerInputTarget: Entity
 
     init(assembly: TrackAssembly) async throws {
         let root = Entity()
@@ -39,6 +44,11 @@ final class TrackCollisionLoopScene {
             root.addChild(entity)
             trackEntities.append(entity)
         }
+
+        let controllerInputTarget = Self.makeControllerInputTarget(
+            covering: root.visualBounds(relativeTo: root)
+        )
+        root.addChild(controllerInputTarget)
 
         var seamProbes: [Entity] = []
         for (index, connection) in assembly.connections.enumerated() {
@@ -66,12 +76,46 @@ final class TrackCollisionLoopScene {
         self.root = root
         self.trackEntities = trackEntities
         self.seamProbes = seamProbes
+        self.controllerInputTarget = controllerInputTarget
     }
 
     static func placedEntityName(
         for id: PlacedTrackPiece.ID
     ) -> String {
         "collision-track-piece-\(id.rawValue)"
+    }
+
+    private static func makeControllerInputTarget(
+        covering trackBounds: BoundingBox
+    ) -> Entity {
+        precondition(trackBounds.isEmpty == false)
+
+        let target = Entity()
+        target.name = controllerInputTargetName
+        target.position = SIMD3(
+            trackBounds.center.x,
+            trackBounds.min.y - controllerInputThickness,
+            trackBounds.center.z
+        )
+
+        let shape = ShapeResource.generateBox(
+            size: SIMD3(
+                trackBounds.extents.x + controllerInputPadding * 2,
+                controllerInputThickness,
+                trackBounds.extents.z + controllerInputPadding * 2
+            )
+        )
+        target.components.set(
+            CollisionComponent(
+                shapes: [shape],
+                mode: .trigger,
+                filter: .sensor
+            )
+        )
+        target.components.set(
+            InputTargetComponent(allowedInputTypes: .indirect)
+        )
+        return target
     }
 
     private static func makeSeamProbe(
