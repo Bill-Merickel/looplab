@@ -11,7 +11,7 @@ import UIKit
 /// The probes are intentionally simple Phase 0 diagnostics, not vehicles.
 @MainActor
 final class TrackCollisionLoopScene {
-    static let rootEntityName = "phase-0-collision-loop"
+    static let rootEntityName = Phase0CollisionLoop.courseID
     static let seamProbeNamePrefix = "seam-probe-"
     static let controllerInputTargetName = "track-controller-input-target"
 
@@ -23,7 +23,10 @@ final class TrackCollisionLoopScene {
     let seamProbes: [Entity]
     let controllerInputTarget: Entity
 
-    init(assembly: TrackAssembly) async throws {
+    init(
+        assembly: TrackAssembly,
+        includesSeamProbes: Bool = true
+    ) async throws {
         let root = Entity()
         root.name = Self.rootEntityName
         root.scale = SIMD3(repeating: 0.35)
@@ -51,26 +54,28 @@ final class TrackCollisionLoopScene {
         root.addChild(controllerInputTarget)
 
         var seamProbes: [Entity] = []
-        for (index, connection) in assembly.connections.enumerated() {
-            let endpoints = try assembly.directedEndpoints(
-                for: connection
-            )
-            let (piece, socket) = try assembly.resolve(endpoints.exit)
-            let socketWorld = piece.transform.concatenating(
-                socket.localTransform
-            )
-            let direction = simd_normalize(
-                socketWorld.transform(direction: SIMD3(0, 0, 1))
-            )
-            let probe = Self.makeSeamProbe(
-                index: index,
-                position: socketWorld.position
-                    - direction * 0.14
-                    + SIMD3(0, 0.055, 0),
-                velocity: direction * 0.45
-            )
-            root.addChild(probe)
-            seamProbes.append(probe)
+        if includesSeamProbes {
+            for (index, connection) in assembly.connections.enumerated() {
+                let endpoints = try assembly.directedEndpoints(
+                    for: connection
+                )
+                let (piece, socket) = try assembly.resolve(endpoints.exit)
+                let socketWorld = piece.transform.concatenating(
+                    socket.localTransform
+                )
+                let direction = simd_normalize(
+                    socketWorld.transform(direction: SIMD3(0, 0, 1))
+                )
+                let probe = Self.makeSeamProbe(
+                    index: index,
+                    position: socketWorld.position
+                        - direction * 0.14
+                        + SIMD3(0, 0.055, 0),
+                    velocity: direction * 0.45
+                )
+                root.addChild(probe)
+                seamProbes.append(probe)
+            }
         }
 
         self.root = root
