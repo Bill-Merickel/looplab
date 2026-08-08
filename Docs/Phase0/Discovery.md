@@ -37,3 +37,8 @@ Updated: 2026-07-23
   clamping, connection transitions, and stuck-input prevention. Physical input
   delivery, gaze coverage, reconnection, and perceived latency are verified in
   [`DualSenseVerification.md`](DualSenseVerification.md).
+- The shared vehicle harness keeps controller input, configuration, timing,
+  recovery, presentation, and instrumentation constant while swapping the two
+  Phase 0 controller approaches. Its repeatable comparison configuration and
+  smoke checks are recorded in
+  [`VehicleHarnessVerification.md`](VehicleHarnessVerification.md).

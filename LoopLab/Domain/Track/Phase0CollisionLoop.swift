@@ -5,6 +5,7 @@
 
 /// Deterministic snapped loop used by the Phase 0 collision prototypes.
 nonisolated enum Phase0CollisionLoop {
+    static let courseID = "phase-0-collision-loop"
     static let startFinishID = PlacedTrackPiece.ID(
         rawValue: "loop-start-finish"
     )
