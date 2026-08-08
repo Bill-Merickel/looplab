@@ -16,6 +16,9 @@ struct LoopLabApp: App {
         WindowGroup {
             HomeView()
                 .environment(appModel)
+                .onAppear {
+                    appModel.input.start()
+                }
         }
 
         ImmersiveSpace(id: appModel.immersiveSpaceID) {

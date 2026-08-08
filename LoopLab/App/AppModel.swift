@@ -12,6 +12,7 @@ import Observation
 @Observable
 final class AppModel {
     let immersiveSpaceID = "ImmersiveSpace"
+    let input: InputSession
 
     enum ImmersiveSpaceState: Equatable {
         case closed
@@ -21,6 +22,16 @@ final class AppModel {
     }
 
     private(set) var immersiveSpaceState = ImmersiveSpaceState.closed
+
+    init() {
+        input = InputSession(
+            provider: GameControllerDualSenseProvider()
+        )
+    }
+
+    init(inputProvider: any InputProvider) {
+        input = InputSession(provider: inputProvider)
+    }
 
     var immersiveSpaceButtonLabel: String {
         switch immersiveSpaceState {

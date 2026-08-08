@@ -18,7 +18,6 @@ Updated: 2026-07-23
 - Physical Apple Vision Pro: available
 - DualSense controller: available
 - Device visionOS version: 26.5
-- DualSense firmware version: record during physical acceptance testing
 
 ## Capability assumptions
 
@@ -33,6 +32,8 @@ Updated: 2026-07-23
   checks cover loop topology, collision configuration, and seam tolerances;
   physical-device motion acceptance is recorded in
   [`CollisionLoopVerification.md`](CollisionLoopVerification.md).
-- GameController discovery, DualSense mappings, disconnect behavior, and
-  perceived input latency require the dedicated input slice and physical
-  device.
+- GameController discovery and explicit DualSense mappings are implemented
+  behind the semantic input boundary. Automated checks cover dead zones,
+  clamping, connection transitions, and stuck-input prevention. Physical input
+  delivery, gaze coverage, reconnection, and perceived latency are verified in
+  [`DualSenseVerification.md`](DualSenseVerification.md).

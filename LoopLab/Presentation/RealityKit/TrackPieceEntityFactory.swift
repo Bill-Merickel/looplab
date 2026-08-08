@@ -84,6 +84,9 @@ enum TrackPieceEntityFactory {
 
         entity.components.set(CollisionComponent(shapes: [shape]))
         entity.components.set(
+            InputTargetComponent(allowedInputTypes: .indirect)
+        )
+        entity.components.set(
             PhysicsBodyComponent(
                 shapes: [shape],
                 mass: 1,
