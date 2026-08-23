@@ -44,11 +44,16 @@ final class VehicleHarnessRuntime {
                 guard let self else {
                     return
                 }
+                let surface = scene.sampleSurface(
+                    tuning: Phase0VehicleComparison.physicsForce
+                )
                 let state = scene.state(
-                    contactCount: session.contactCount
+                    contactCount: session.contactCount,
+                    surface: surface
                 )
                 let command = session.update(
                     state: state,
+                    surface: surface,
                     input: input(),
                     frameDeltaTime: event.deltaTime
                 )

@@ -19,6 +19,7 @@ struct VehicleHarnessSessionTests {
         #expect(
             harness.update(
                 state: state,
+                surface: .airborne,
                 input: resetInput,
                 frameDeltaTime: 1 / 90
             ) == .reset(.manual)
@@ -26,9 +27,12 @@ struct VehicleHarnessSessionTests {
         #expect(
             harness.update(
                 state: state,
+                surface: .airborne,
                 input: resetInput,
                 frameDeltaTime: 1 / 90
-            ) == .actuate(.none)
+            ) == .actuate(
+                .forces(force: .zero, torque: .zero)
+            )
         )
         #expect(harness.telemetry.resetCount == 1)
     }
@@ -41,6 +45,7 @@ struct VehicleHarnessSessionTests {
         harness.selectNextController()
         let command = harness.update(
             state: state,
+            surface: .airborne,
             input: .neutral,
             frameDeltaTime: 1 / 90
         )
@@ -68,6 +73,11 @@ struct VehicleHarnessSessionTests {
 
         _ = harness.update(
             state: state,
+            surface: VehicleSurfaceSample(
+                isGrounded: true,
+                distance: 0.05,
+                normal: SIMD3(0, 1, 0)
+            ),
             input: input,
             frameDeltaTime: frameDeltaTime
         )
@@ -93,5 +103,48 @@ struct VehicleHarnessSessionTests {
         harness.contactEnded()
 
         #expect(harness.contactCount == 1)
+    }
+
+    @Test("stuck detection is surfaced as a shared reset command")
+    func stuckDetectionRequestsReset() {
+        let standard = Phase0VehicleComparison.recovery
+        let recovery = VehicleRecoveryPolicy(
+            minimumHeight: standard.minimumHeight,
+            maximumDistanceFromStart: standard.maximumDistanceFromStart,
+            maximumUngroundedDuration: standard.maximumUngroundedDuration,
+            maximumStalledDuration: 0.02,
+            minimumMovementSpeed: standard.minimumMovementSpeed,
+            minimumDriveInput: standard.minimumDriveInput
+        )
+        let harness = VehicleHarnessSession(recoveryPolicy: recovery)
+        let state = VehicleState(
+            pose: harness.startPose,
+            linearVelocity: .zero,
+            angularVelocity: .zero,
+            isGrounded: true,
+            contactCount: 1
+        )
+        let surface = VehicleSurfaceSample(
+            isGrounded: true,
+            distance: 0.05,
+            normal: SIMD3(0, 1, 0)
+        )
+        let input = SemanticInputState(throttle: 1)
+
+        _ = harness.update(
+            state: state,
+            surface: surface,
+            input: input,
+            frameDeltaTime: 0.01
+        )
+        let command = harness.update(
+            state: state,
+            surface: surface,
+            input: input,
+            frameDeltaTime: 0.01
+        )
+
+        #expect(command == .reset(.stuck))
+        #expect(harness.lastResetReason == .stuck)
     }
 }

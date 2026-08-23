@@ -11,6 +11,7 @@ final class VehicleHarnessScene {
     let trackScene: TrackCollisionLoopScene
     let vehicle: ModelEntity
     let startPose: TrackTransform
+    let configuration: VehicleConfiguration
 
     var root: Entity {
         trackScene.root
@@ -28,12 +29,16 @@ final class VehicleHarnessScene {
         vehicle = GrayBoxVehicleEntityFactory.makeEntity(
             configuration: configuration
         )
+        self.configuration = configuration
         self.startPose = startPose
         apply(startPose)
         root.addChild(vehicle)
     }
 
-    func state(contactCount: Int) -> VehicleState {
+    func state(
+        contactCount: Int,
+        surface: VehicleSurfaceSample
+    ) -> VehicleState {
         let motion = vehicle.components[PhysicsMotionComponent.self]
             ?? PhysicsMotionComponent()
         return VehicleState(
@@ -43,8 +48,53 @@ final class VehicleHarnessScene {
             ),
             linearVelocity: motion.linearVelocity,
             angularVelocity: motion.angularVelocity,
-            isGrounded: contactCount > 0,
+            isGrounded: surface.isGrounded,
             contactCount: contactCount
+        )
+    }
+
+    func sampleSurface(
+        tuning: PhysicsForceConfiguration
+    ) -> VehicleSurfaceSample {
+        guard let realityScene = vehicle.scene else {
+            return .airborne
+        }
+
+        let halfWidth = configuration.dimensions.width / 2
+        let halfLength = configuration.dimensions.length / 2
+        let inset = tuning.surfaceProbeInset
+        let probeOffsets = [
+            SIMD3<Float>.zero,
+            SIMD3(-halfWidth * inset, 0, -halfLength * inset),
+            SIMD3(halfWidth * inset, 0, -halfLength * inset),
+            SIMD3(-halfWidth * inset, 0, halfLength * inset),
+            SIMD3(halfWidth * inset, 0, halfLength * inset),
+        ]
+        let hits = probeOffsets.compactMap { offset in
+            let origin = vehicle.convert(position: offset, to: root)
+            return realityScene.raycast(
+                origin: origin,
+                direction: SIMD3(0, -1, 0),
+                length: tuning.surfaceProbeLength,
+                query: .nearest,
+                mask: Phase0CollisionGroups.trackSurface,
+                relativeTo: root
+            ).first
+        }
+        let groundedHits = hits.filter {
+            $0.distance <= tuning.maximumGroundedDistance
+        }
+        guard groundedHits.isEmpty == false else {
+            return .airborne
+        }
+
+        let normalSum = groundedHits.reduce(SIMD3<Float>.zero) {
+            $0 + $1.normal
+        }
+        return VehicleSurfaceSample(
+            isGrounded: true,
+            distance: groundedHits.map(\.distance).min(),
+            normal: normalSum
         )
     }
 
@@ -58,6 +108,7 @@ final class VehicleHarnessScene {
     }
 
     func reset() {
+        vehicle.clearForcesAndTorques()
         apply(startPose)
         vehicle.components.set(PhysicsMotionComponent())
     }

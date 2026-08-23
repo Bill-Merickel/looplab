@@ -79,6 +79,11 @@ struct VehicleControllerHostTests {
     private func makeContext() -> VehicleControllerContext {
         VehicleControllerContext(
             state: .resting(at: Phase0VehicleComparison.startPose),
+            surface: VehicleSurfaceSample(
+                isGrounded: true,
+                distance: 0.065,
+                normal: SIMD3(0, 1, 0)
+            ),
             input: SemanticInputState(
                 steering: 0.5,
                 throttle: 0.75

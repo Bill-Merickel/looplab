@@ -18,7 +18,12 @@ struct VehicleHarnessSceneTests {
         #expect(scene.trackScene.seamProbes.isEmpty)
         #expect(
             scene.root.children.count
-                == assembly.pieces.count + 2
+                == assembly.pieces.count + 3
+        )
+        #expect(
+            scene.root.findEntity(
+                named: TrackCollisionSurfaceFactory.entityName
+            ) === scene.trackScene.collisionSurface
         )
         #expect(
             scene.root.findEntity(
@@ -39,7 +44,10 @@ struct VehicleHarnessSceneTests {
         )
 
         scene.reset()
-        let state = scene.state(contactCount: 0)
+        let state = scene.state(
+            contactCount: 0,
+            surface: .airborne
+        )
 
         #expect(
             state.pose.isApproximatelyEqual(

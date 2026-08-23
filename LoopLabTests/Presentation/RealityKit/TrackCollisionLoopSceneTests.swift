@@ -10,38 +10,32 @@ import Testing
 @Suite("Closed-loop RealityKit collision presentation")
 @MainActor
 struct TrackCollisionLoopSceneTests {
-    @Test("every gray-box piece has collision and an indirect input target")
-    func piecesHaveStaticCollisionAndInputTargets() async throws {
-        for definition in TrackPieceCatalog.phase0 {
-            let shape = try await TrackPieceEntityFactory.collisionShape(
-                for: definition
-            )
-            let entity = try await TrackPieceEntityFactory
-                .makeCollidableEntity(for: definition)
-            let body = try #require(
-                entity.components[PhysicsBodyComponent.self]
-            )
+    @Test("scene uses one non-rendering static drive surface")
+    func sceneUsesOneStaticDriveSurface() async throws {
+        let assembly = try Phase0CollisionLoop.makeAssembly()
+        let scene = try await TrackCollisionLoopScene(
+            assembly: assembly
+        )
+        let surface = scene.collisionSurface
+        let collision = try #require(
+            surface.components[CollisionComponent.self]
+        )
+        let body = try #require(
+            surface.components[PhysicsBodyComponent.self]
+        )
 
+        #expect(surface.name == TrackCollisionSurfaceFactory.entityName)
+        #expect(collision.shapes.count == 1)
+        #expect(
+            collision.filter.group == Phase0CollisionGroups.trackSurface
+        )
+        #expect(body.mode == .static)
+        #expect(surface.components.has(ModelComponent.self) == false)
+
+        for entity in scene.trackEntities {
+            #expect(entity.components.has(CollisionComponent.self) == false)
             #expect(
-                entity.components.has(CollisionComponent.self)
-            )
-            let inputTarget = try #require(
-                entity.components[InputTargetComponent.self]
-            )
-            #expect(inputTarget.allowedInputTypes.contains(.indirect))
-            #expect(body.mode == .static)
-            #expect(shape.bounds.isEmpty == false)
-            #expect(
-                approximatelyEqual(
-                    shape.bounds.min,
-                    definition.bounds.minimum
-                )
-            )
-            #expect(
-                approximatelyEqual(
-                    shape.bounds.max,
-                    definition.bounds.maximum
-                )
+                entity.components.has(PhysicsBodyComponent.self) == false
             )
         }
     }
@@ -54,11 +48,14 @@ struct TrackCollisionLoopSceneTests {
         )
 
         #expect(scene.root.name == TrackCollisionLoopScene.rootEntityName)
+        #expect(
+            scene.root.components.has(PhysicsSimulationComponent.self)
+        )
         #expect(scene.trackEntities.count == assembly.pieces.count)
         #expect(scene.seamProbes.count == assembly.connections.count)
         #expect(
             scene.root.children.count
-                == assembly.pieces.count + assembly.connections.count + 1
+                == assembly.pieces.count + assembly.connections.count + 2
         )
 
         for piece in assembly.pieces {
@@ -72,7 +69,7 @@ struct TrackCollisionLoopSceneTests {
         }
     }
 
-    @Test("controller target covers the complete track without joining physics")
+    @Test("controller target is an unobstructed capture surface above the track")
     func controllerTargetCoversTrack() async throws {
         let assembly = try Phase0CollisionLoop.makeAssembly()
         let scene = try await TrackCollisionLoopScene(
@@ -105,11 +102,14 @@ struct TrackCollisionLoopSceneTests {
         )
         #expect(inputTarget.allowedInputTypes.contains(.indirect))
         #expect(collision.mode == .trigger)
-        #expect(collision.filter == .sensor)
+        #expect(
+            collision.filter == CollisionFilter(group: [], mask: [])
+        )
         #expect(target.components.has(ModelComponent.self) == false)
         #expect(target.components.has(PhysicsBodyComponent.self) == false)
         #expect(captureBounds.min.x < trackBounds.min.x)
         #expect(captureBounds.max.x > trackBounds.max.x)
+        #expect(captureBounds.min.y > trackBounds.max.y)
         #expect(captureBounds.min.z < trackBounds.min.z)
         #expect(captureBounds.max.z > trackBounds.max.z)
     }

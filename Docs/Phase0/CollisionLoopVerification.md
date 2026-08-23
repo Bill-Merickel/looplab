@@ -17,11 +17,12 @@
 | Opposed tangent angle | 0.001 rad |
 | Matched lane-edge position | 0.0001 m |
 
-RealityKit presentation is generated from this domain assembly. Each track
-piece owns one static collision shape derived from its geometry recipe. Each
-connection receives one small orange dynamic sphere with continuous collision
-detection. These spheres are seam diagnostics only; they are not a vehicle
-physics prototype.
+RealityKit presentation is generated from this domain assembly. The visible
+pieces do not own physics bodies. Instead, their transformed top faces are
+welded into one static course collision mesh, so connected pieces share an edge
+without leaving internal end faces at the seam. Each connection receives one
+small orange dynamic sphere with continuous collision detection. These spheres
+are seam diagnostics only; they are not a vehicle physics prototype.
 
 ## Physical Apple Vision Pro checklist
 

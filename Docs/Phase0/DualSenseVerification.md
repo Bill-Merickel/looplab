@@ -26,12 +26,14 @@ The platform adapter consumes buffered snapshots from `GCControllerLiveInput`
 so short presses are not lost between display frames. The immersive
 `RealityView` requests gamepad delivery, and every collidable track piece is an
 indirect input target so looking at the track counts as looking at LoopLab's
-game content. A separate invisible trigger target covers the track's complete
-rectangular footprint with a small margin, including the open center of the
-oval. It has no model or physics body, so it neither appears nor affects the
-seam probes. The input session ignores values while disconnected and
-immediately replaces all analog and held-button values with the neutral state
-on disconnect or shutdown. SwiftUI remains the essential navigation fallback.
+game content. A separate invisible trigger surface sits above the complete
+rectangular track footprint with a generous margin, including the open center
+of the oval. Its placement prevents the track and vehicle from occluding the
+game-controller focus region. The surface has no visible model, and its empty
+collision filter and lack of a physics body keep it out of physics. The input
+session ignores values while disconnected and immediately replaces all analog
+and held-button values with the neutral state on disconnect or shutdown. SwiftUI
+remains the essential navigation fallback.
 
 ## Physical Apple Vision Pro checklist
 
