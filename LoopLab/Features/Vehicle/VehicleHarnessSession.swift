@@ -45,7 +45,7 @@ final class VehicleHarnessSession {
         self.recoveryPolicy = recoveryPolicy
         let registeredControllers = controllers ?? [
             PhysicsForceVehicleController(),
-            PassiveVehicleController(kind: .constraintAssisted),
+            ConstraintAssistedVehicleController(),
         ]
         controllerHost = VehicleControllerHost(
             controllers: registeredControllers,

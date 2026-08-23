@@ -50,4 +50,25 @@ nonisolated struct SemanticInputState: Equatable, Sendable {
         }
         return min(maximum, max(minimum, value))
     }
+
+    var longitudinalIntent: VehicleLongitudinalIntent {
+        if throttle > 0, brakeReverse > 0 {
+            return .brakeToStop(amount: brakeReverse)
+        }
+        if throttle > 0 {
+            return .drive(amount: throttle)
+        }
+        if brakeReverse > 0 {
+            return .brakeReverse(amount: brakeReverse)
+        }
+        return .coast
+    }
+}
+
+/// Mutually exclusive pedal behavior shared by every vehicle controller.
+nonisolated enum VehicleLongitudinalIntent: Equatable, Sendable {
+    case coast
+    case drive(amount: Float)
+    case brakeReverse(amount: Float)
+    case brakeToStop(amount: Float)
 }

@@ -48,6 +48,16 @@ nonisolated enum Phase0VehicleComparison {
         rollPitchDamping: 0.004
     )
 
+    static let constraintAssisted = ConstraintAssistedConfiguration(
+        rideHeight: 0.065,
+        coastingDeceleration: 0.35,
+        lateralGripRate: 8,
+        minimumSteeringSpeed: 0.05,
+        fullSteeringSpeed: 0.5,
+        highSpeedSteeringFraction: 0.65,
+        airborneGravity: 9.81
+    )
+
     static let recovery = VehicleRecoveryPolicy(
         minimumHeight: -0.5,
         maximumDistanceFromStart: 4,
