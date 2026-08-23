@@ -33,6 +33,13 @@ struct GrayBoxVehicleEntityFactoryTests {
         )
         #expect(body.mode == .dynamic)
         #expect(body.isContinuousCollisionDetectionEnabled)
+        #expect(body.linearDamping == 0.08)
+        #expect(body.angularDamping == 0.2)
+        #expect(collision.filter.group == Phase0CollisionGroups.vehicle)
+        #expect(
+            collision.filter.mask
+                == Phase0CollisionGroups.trackSurface
+        )
         #expect(
             vehicle.findEntity(
                 named: GrayBoxVehicleEntityFactory.chassisName

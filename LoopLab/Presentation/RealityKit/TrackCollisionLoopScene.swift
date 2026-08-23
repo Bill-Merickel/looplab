@@ -15,11 +15,13 @@ final class TrackCollisionLoopScene {
     static let seamProbeNamePrefix = "seam-probe-"
     static let controllerInputTargetName = "track-controller-input-target"
 
-    private static let controllerInputPadding: Float = 0.35
+    private static let controllerInputPadding: Float = 0.75
+    private static let controllerInputClearance: Float = 0.20
     private static let controllerInputThickness: Float = 0.02
 
     let root: Entity
     let trackEntities: [Entity]
+    let collisionSurface: Entity
     let seamProbes: [Entity]
     let controllerInputTarget: Entity
 
@@ -29,6 +31,12 @@ final class TrackCollisionLoopScene {
     ) async throws {
         let root = Entity()
         root.name = Self.rootEntityName
+        var physicsSimulation = PhysicsSimulationComponent()
+        physicsSimulation.solverIterations = .init(
+            positionIterations: 8,
+            velocityIterations: 3
+        )
+        root.components.set(physicsSimulation)
         root.scale = SIMD3(repeating: 0.35)
         root.position = SIMD3(0.28, -0.45, -1.2)
 
@@ -40,13 +48,18 @@ final class TrackCollisionLoopScene {
                 throw TrackAssemblyError.missingDefinition(piece.kind)
             }
 
-            let entity = try await TrackPieceEntityFactory
-                .makeCollidableEntity(for: definition)
+            let entity = try TrackPieceEntityFactory.makeEntity(
+                for: definition
+            )
             entity.name = Self.placedEntityName(for: piece.id)
             Self.apply(piece.transform, to: entity)
             root.addChild(entity)
             trackEntities.append(entity)
         }
+
+        let collisionSurface = try await TrackCollisionSurfaceFactory
+            .makeEntity(for: assembly)
+        root.addChild(collisionSurface)
 
         let controllerInputTarget = Self.makeControllerInputTarget(
             covering: root.visualBounds(relativeTo: root)
@@ -80,6 +93,7 @@ final class TrackCollisionLoopScene {
 
         self.root = root
         self.trackEntities = trackEntities
+        self.collisionSurface = collisionSurface
         self.seamProbes = seamProbes
         self.controllerInputTarget = controllerInputTarget
     }
@@ -99,22 +113,23 @@ final class TrackCollisionLoopScene {
         target.name = controllerInputTargetName
         target.position = SIMD3(
             trackBounds.center.x,
-            trackBounds.min.y - controllerInputThickness,
+            trackBounds.max.y
+                + controllerInputClearance
+                + controllerInputThickness / 2,
             trackBounds.center.z
         )
 
-        let shape = ShapeResource.generateBox(
-            size: SIMD3(
-                trackBounds.extents.x + controllerInputPadding * 2,
-                controllerInputThickness,
-                trackBounds.extents.z + controllerInputPadding * 2
-            )
+        let captureSize = SIMD3<Float>(
+            trackBounds.extents.x + controllerInputPadding * 2,
+            controllerInputThickness,
+            trackBounds.extents.z + controllerInputPadding * 2
         )
+        let shape = ShapeResource.generateBox(size: captureSize)
         target.components.set(
             CollisionComponent(
                 shapes: [shape],
                 mode: .trigger,
-                filter: .sensor
+                filter: CollisionFilter(group: [], mask: [])
             )
         )
         target.components.set(

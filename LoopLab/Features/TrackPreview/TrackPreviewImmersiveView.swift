@@ -36,7 +36,7 @@ struct TrackPreviewImmersiveView: View {
                 if let instructions = attachments.entity(
                     for: "vehicle-harness"
                 ) {
-                    instructions.position = SIMD3(0, 0.05, -1.1)
+                    instructions.position = SIMD3(0, 0.05, -1.65)
                     content.add(instructions)
                 }
             } catch {

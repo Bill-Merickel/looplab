@@ -24,7 +24,20 @@ struct DualSenseInputMapperTests {
 
         #expect(insidePositive.steering == 0)
         #expect(insideNegative.steering == 0)
-        #expect(approximatelyEqual(halfway.steering, 0.5))
+        #expect(approximatelyEqual(halfway.steering, -0.5))
+    }
+
+    @Test("left-stick steering direction is inverted")
+    func steeringDirection() {
+        let stickRight = mapper.map(
+            DualSenseInputReading(leftStickX: 1)
+        )
+        let stickLeft = mapper.map(
+            DualSenseInputReading(leftStickX: -1)
+        )
+
+        #expect(stickRight.steering == -1)
+        #expect(stickLeft.steering == 1)
     }
 
     @Test("trigger dead zone removes rest noise and rescales output")
@@ -58,7 +71,7 @@ struct DualSenseInputMapperTests {
             )
         )
 
-        #expect(clamped.steering == -1)
+        #expect(clamped.steering == 1)
         #expect(clamped.throttle == 1)
         #expect(clamped.brakeReverse == 0)
     }

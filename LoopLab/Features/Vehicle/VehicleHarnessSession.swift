@@ -25,6 +25,7 @@ final class VehicleHarnessSession {
     private var previousResetInput = false
     private var stepIndex: UInt64 = 0
     private var elapsedTime: TimeInterval = 0
+    private var recoveryTracker = VehicleRecoveryTracker()
 
     init(
         configuration: VehicleConfiguration = Phase0VehicleComparison.configuration,
@@ -36,13 +37,14 @@ final class VehicleHarnessSession {
         activeController: VehicleControllerKind = .physicsForce
     ) {
         precondition(configuration.hasValidValues)
+        precondition(recoveryPolicy.hasValidValues)
         self.configuration = configuration
         self.comparisonRun = comparisonRun
         self.startPose = startPose
         self.timingConfiguration = timingConfiguration
         self.recoveryPolicy = recoveryPolicy
         let registeredControllers = controllers ?? [
-            PassiveVehicleController(kind: .physicsForce),
+            PhysicsForceVehicleController(),
             PassiveVehicleController(kind: .constraintAssisted),
         ]
         controllerHost = VehicleControllerHost(
@@ -82,6 +84,7 @@ final class VehicleHarnessSession {
 
     func update(
         state: VehicleState,
+        surface: VehicleSurfaceSample,
         input: SemanticInputState,
         frameDeltaTime: TimeInterval
     ) -> VehicleHarnessCommand {
@@ -97,14 +100,18 @@ final class VehicleHarnessSession {
         previousResetInput = input.reset
         let resetReason = pendingResetReason
             ?? (resetPressed ? .manual : nil)
-            ?? recoveryPolicy.resetReason(
+            ?? recoveryTracker.resetReason(
                 for: state,
-                startPose: startPose
+                input: input,
+                timing: timing,
+                startPose: startPose,
+                policy: recoveryPolicy
             )
 
         if let resetReason {
             pendingResetReason = nil
             controllerHost.reset()
+            recoveryTracker.reset()
             contactCount = 0
             lastResetReason = resetReason
             telemetry = VehicleTelemetry(
@@ -122,6 +129,7 @@ final class VehicleHarnessSession {
 
         let context = VehicleControllerContext(
             state: state,
+            surface: surface,
             input: input,
             configuration: configuration,
             timing: timing

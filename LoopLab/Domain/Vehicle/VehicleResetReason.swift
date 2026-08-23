@@ -9,5 +9,7 @@ nonisolated enum VehicleResetReason: String, Equatable, Sendable {
     case controllerChanged
     case fellBelowTrack
     case leftCourseBounds
+    case lostTrackSurface
+    case stuck
     case invalidState
 }

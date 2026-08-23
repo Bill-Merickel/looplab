@@ -16,6 +16,8 @@ struct VehicleConfigurationTests {
         #expect(configuration.dimensions.width < TrackPieceCatalog.laneWidth)
         #expect(configuration.id.rawValue == "phase-0-gray-box-vehicle")
         #expect(configuration.version == 1)
+        #expect(Phase0VehicleComparison.physicsForce.hasValidValues)
+        #expect(Phase0VehicleComparison.recovery.hasValidValues)
     }
 
     @Test("comparison run uses the collision loop and shared success target")

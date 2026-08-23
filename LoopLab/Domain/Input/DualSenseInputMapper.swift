@@ -22,7 +22,7 @@ nonisolated struct DualSenseInputMapper: Sendable {
 
     func map(_ reading: DualSenseInputReading) -> SemanticInputState {
         SemanticInputState(
-            steering: applySignedDeadZone(
+            steering: -applySignedDeadZone(
                 reading.leftStickX,
                 deadZone: Self.steeringDeadZone
             ),
