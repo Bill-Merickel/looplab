@@ -14,7 +14,7 @@ struct VehicleHarnessHUD: View {
         VStack(spacing: 6) {
             Text("Shared Vehicle Harness")
                 .font(.headline)
-            Text("Physics-force prototype active; Step 6 remains passive.")
+            Text("Phase 0 controller comparison active.")
                 .font(.caption)
             Divider()
             Text(input.connectionDescription)

@@ -36,5 +36,6 @@ have been evaluated.
 - [x] Look across the complete track footprint and confirm controller activity
       remains visible in the harness HUD.
 
-Actual driving and three-loop comparison results are recorded after Steps 5
-and 6 provide the two controller implementations.
+Actual driving and three-loop comparison results are recorded in
+`ConstraintAssistedControllerVerification.md` now that Steps 5 and 6 provide
+both controller implementations.

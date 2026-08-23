@@ -73,6 +73,33 @@ struct PhysicsForceCalculatorTests {
         )
     }
 
+    @Test("simultaneous pedals brake either direction and hold at rest")
+    func simultaneousPedalsBrakeToStop() {
+        let input = SemanticInputState(throttle: 1, brakeReverse: 1)
+        let forward = calculator.calculate(
+            context: makeContext(
+                velocity: SIMD3(0, 0, 1),
+                input: input
+            )
+        )
+        let reverse = calculator.calculate(
+            context: makeContext(
+                velocity: SIMD3(0, 0, -1),
+                input: input
+            )
+        )
+        let stopped = calculator.calculate(
+            context: makeContext(input: input)
+        )
+
+        #expect(forward.driveForce == .zero)
+        #expect(forward.brakingForce.z < 0)
+        #expect(reverse.driveForce == .zero)
+        #expect(reverse.brakingForce.z > 0)
+        #expect(stopped.driveForce == .zero)
+        #expect(stopped.brakingForce == .zero)
+    }
+
     @Test("steering requires motion and turns toward the input")
     func steeringIsSpeedSensitive() {
         let stopped = calculator.calculate(

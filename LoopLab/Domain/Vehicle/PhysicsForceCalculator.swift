@@ -38,18 +38,20 @@ nonisolated struct PhysicsForceCalculator: Sendable {
         let velocity = context.state.linearVelocity
         let forwardSpeed = simd_dot(velocity, forward)
         let lateralSpeed = simd_dot(velocity, right)
+        let longitudinalIntent = context.input.longitudinalIntent
 
         let driveForce = makeDriveForce(
-            input: context.input,
+            intent: longitudinalIntent,
             forward: forward,
             forwardSpeed: forwardSpeed,
             configuration: context.configuration
         )
         let brakingForce = makeBrakingForce(
-            input: context.input,
+            intent: longitudinalIntent,
             forward: forward,
             forwardSpeed: forwardSpeed,
-            configuration: context.configuration
+            configuration: context.configuration,
+            deltaTime: Float(context.timing.deltaTime)
         )
         let lateralGripForce = makeLateralGripForce(
             right: right,
@@ -90,44 +92,74 @@ nonisolated struct PhysicsForceCalculator: Sendable {
     }
 
     private func makeDriveForce(
-        input: SemanticInputState,
+        intent: VehicleLongitudinalIntent,
         forward: SIMD3<Float>,
         forwardSpeed: Float,
         configuration: VehicleConfiguration
     ) -> SIMD3<Float> {
-        guard input.throttle > 0,
+        guard case let .drive(amount) = intent,
               forwardSpeed < configuration.maximumForwardSpeed else {
             return .zero
         }
         return forward
             * configuration.mass
             * configuration.driveAcceleration
-            * input.throttle
+            * amount
     }
 
     private func makeBrakingForce(
-        input: SemanticInputState,
+        intent: VehicleLongitudinalIntent,
         forward: SIMD3<Float>,
         forwardSpeed: Float,
-        configuration: VehicleConfiguration
+        configuration: VehicleConfiguration,
+        deltaTime: Float
     ) -> SIMD3<Float> {
-        guard input.brakeReverse > 0 else {
-            return .zero
-        }
-
-        if forwardSpeed > 0.05 {
+        switch intent {
+        case let .brakeReverse(amount):
+            if forwardSpeed > 0.05 {
+                return -forward
+                    * configuration.mass
+                    * configuration.brakingDeceleration
+                    * amount
+            }
+            guard forwardSpeed > -configuration.maximumReverseSpeed else {
+                return .zero
+            }
             return -forward
                 * configuration.mass
-                * configuration.brakingDeceleration
-                * input.brakeReverse
-        }
-        guard forwardSpeed > -configuration.maximumReverseSpeed else {
+                * configuration.driveAcceleration
+                * amount
+        case let .brakeToStop(amount):
+            return makeStoppingForce(
+                amount: amount,
+                forward: forward,
+                forwardSpeed: forwardSpeed,
+                configuration: configuration,
+                deltaTime: deltaTime
+            )
+        case .coast, .drive:
             return .zero
         }
-        return -forward
-            * configuration.mass
-            * configuration.driveAcceleration
-            * input.brakeReverse
+    }
+
+    private func makeStoppingForce(
+        amount: Float,
+        forward: SIMD3<Float>,
+        forwardSpeed: Float,
+        configuration: VehicleConfiguration,
+        deltaTime: Float
+    ) -> SIMD3<Float> {
+        guard abs(forwardSpeed) > 0.000_001 else {
+            return .zero
+        }
+        let maximumMagnitude = configuration.mass
+            * configuration.brakingDeceleration
+            * amount
+        let stoppingMagnitude = configuration.mass
+            * abs(forwardSpeed)
+            / max(deltaTime, 0.000_001)
+        let magnitude = min(maximumMagnitude, stoppingMagnitude)
+        return forward * (forwardSpeed > 0 ? -magnitude : magnitude)
     }
 
     private func makeLateralGripForce(

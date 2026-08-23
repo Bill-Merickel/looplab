@@ -17,6 +17,7 @@ struct VehicleConfigurationTests {
         #expect(configuration.id.rawValue == "phase-0-gray-box-vehicle")
         #expect(configuration.version == 1)
         #expect(Phase0VehicleComparison.physicsForce.hasValidValues)
+        #expect(Phase0VehicleComparison.constraintAssisted.hasValidValues)
         #expect(Phase0VehicleComparison.recovery.hasValidValues)
     }
 

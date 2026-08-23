@@ -56,9 +56,9 @@ Testing coverage verifies:
       coasts rather than teleporting or being pose-driven.
 - [x] Use **Reset Vehicle** and confirm pose and motion return to the canonical
       start state.
-- [x] Switch to **Constraint Assisted** and confirm the same course, vehicle,
-      HUD, and reset flow remain in place while that Step 6 controller is still
-      passive.
+- [x] During the Step 5 baseline, switch to **Constraint Assisted** and confirm
+      the same course, vehicle, HUD, and reset flow remain in place while its
+      controller implementation was still passive.
 
 ## Physical Apple Vision Pro and DualSense check
 

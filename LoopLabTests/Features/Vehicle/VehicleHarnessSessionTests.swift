@@ -55,6 +55,49 @@ struct VehicleHarnessSessionTests {
         #expect(harness.telemetry.resetCount == 1)
     }
 
+    @Test("default constraint controller produces constrained actuation")
+    func constraintControllerIsActiveAfterSelection() {
+        let harness = VehicleHarnessSession()
+        let surface = VehicleSurfaceSample(
+            isGrounded: true,
+            distance: Phase0VehicleComparison.constraintAssisted.rideHeight,
+            normal: SIMD3(0, 1, 0)
+        )
+        let state = VehicleState(
+            pose: harness.startPose,
+            linearVelocity: .zero,
+            angularVelocity: .zero,
+            isGrounded: true,
+            contactCount: 1
+        )
+
+        harness.selectNextController()
+        _ = harness.update(
+            state: state,
+            surface: surface,
+            input: .neutral,
+            frameDeltaTime: 1 / 90
+        )
+        let command = harness.update(
+            state: state,
+            surface: surface,
+            input: SemanticInputState(throttle: 1),
+            frameDeltaTime: 1 / 90
+        )
+
+        guard case let .actuate(.constrained(
+            pose,
+            linearVelocity,
+            angularVelocity
+        )) = command else {
+            Issue.record("Expected constraint-assisted actuation.")
+            return
+        }
+        #expect(pose.isApproximatelyEqual(to: harness.startPose))
+        #expect(linearVelocity.z > 0)
+        #expect(angularVelocity == .zero)
+    }
+
     @Test("telemetry records shared state, contacts, timing, and input")
     func telemetryRecordsSharedValues() {
         let harness = VehicleHarnessSession()
