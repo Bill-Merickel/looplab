@@ -557,6 +557,9 @@ Add a developer HUD showing frame rate, physics time, entity count, active conta
 
 ### Phase 0 — Discovery and technical prototypes
 
+Completion and verification evidence is recorded in
+[`Docs/Phase0/Phase0Completion.md`](Docs/Phase0/Phase0Completion.md).
+
 Deliver:
 
 - Short product brief and experience flow.
@@ -707,11 +710,11 @@ Work roughly in this order:
 
 Create short decision records as these questions are resolved:
 
-- Window, volume, and immersive-space responsibilities.
-- Physics-force versus constraint-assisted vehicle controller.
-- Fixed or variable simulation step.
-- Track scale and maximum spatial footprint.
-- Asset socket and collision authoring contract.
+- [Window and immersive-space responsibilities](Docs/ArchitectureDecisions/0001-use-tabletop-mixed-immersive-presentation.md).
+- [Physics-force versus constraint-assisted vehicle controller](Docs/ArchitectureDecisions/0003-use-constraint-assisted-vehicle-controller.md).
+- [Fixed or variable simulation step — deferred](Docs/ArchitectureDecisions/0005-defer-simulation-step-selection.md).
+- [Track scale and maximum spatial footprint — deferred](Docs/ArchitectureDecisions/0004-defer-maximum-track-footprint.md).
+- [Asset socket and collision authoring contract](Docs/ArchitectureDecisions/0002-use-domain-authored-track-pieces.md).
 - SwiftData/file boundary.
 - Canonical serialization and hashing method.
 - CloudKit versus custom backend.

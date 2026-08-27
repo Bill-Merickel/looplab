@@ -5,6 +5,9 @@
 
 /// Canonical start pose and tuning inputs for the Phase 0 controller comparison.
 nonisolated enum Phase0VehicleComparison {
+    /// Controller selected by the completed Phase 0 comparison.
+    static let selectedController = VehicleControllerKind.constraintAssisted
+
     static let configuration = VehicleConfiguration(
         id: .init(rawValue: "phase-0-gray-box-vehicle"),
         version: 1,

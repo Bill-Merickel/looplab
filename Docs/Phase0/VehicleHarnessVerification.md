@@ -12,14 +12,16 @@
 - Evaluation: use the same vehicle entity, start pose, recovery thresholds,
   telemetry, and course for both controller approaches
 
-The harness caps unusually long frame intervals but intentionally leaves the
-fixed-versus-variable timing decision open until both controller prototypes
-have been evaluated.
+The harness caps unusually long frame intervals and uses the nominal interval
+when a frame delta is invalid. A production fixed-versus-variable timing choice
+remains deferred until replay and lap-timing prototypes can measure it.
 
 ## Simulator smoke check
 
 - [x] Enter Track Preview and confirm one dark-gray vehicle with a yellow
       forward marker rests on the start/finish straight.
+- [x] Confirm **Constraint Assisted**, the Phase 0 selection, is active by
+      default.
 - [x] Confirm the HUD reports speed, update time, grounded state, contacts,
       reset count, active controller, semantic input, and raw controller
       activity.
@@ -30,7 +32,7 @@ have been evaluated.
 
 ## Physical Apple Vision Pro smoke check
 
-- [x] Repeat the simulator checks on the physical device.
+- [x] Repeat the updated simulator checks on the physical device.
 - [x] Press the mapped DualSense reset control and confirm one reset occurs per
       press rather than continuously while held.
 - [x] Look across the complete track footprint and confirm controller activity

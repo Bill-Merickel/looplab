@@ -42,3 +42,19 @@ Updated: 2026-07-23
   Phase 0 controller approaches. Its repeatable comparison configuration and
   smoke checks are recorded in
   [`VehicleHarnessVerification.md`](VehicleHarnessVerification.md).
+
+## Recorded outcomes
+
+- [`ADR-0001`](../ArchitectureDecisions/0001-use-tabletop-mixed-immersive-presentation.md):
+  use a SwiftUI window to enter a tabletop-first mixed immersive space.
+- [`ADR-0002`](../ArchitectureDecisions/0002-use-domain-authored-track-pieces.md):
+  author track pieces and sockets as domain data, generate presentation from
+  that data, and generate one welded drive surface per assembled course.
+- [`ADR-0003`](../ArchitectureDecisions/0003-use-constraint-assisted-vehicle-controller.md):
+  use the constraint-assisted controller as the Phase 1 baseline.
+- [`ADR-0004`](../ArchitectureDecisions/0004-defer-maximum-track-footprint.md):
+  defer the supported maximum footprint until editor and device profiling.
+- [`ADR-0005`](../ArchitectureDecisions/0005-defer-simulation-step-selection.md):
+  defer fixed-versus-variable timing until lap and replay measurement.
+- [`Phase0Completion.md`](Phase0Completion.md) records the satisfied exit
+  criteria, known limitations, and deferred work.
