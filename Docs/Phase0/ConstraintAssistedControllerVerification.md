@@ -4,9 +4,9 @@
 
 - The shared semantic input, course, gray-box vehicle, start pose, surface
   probes, telemetry, timing, and recovery policy remain unchanged from Step 5.
-- Selecting **Constraint Assisted** resets the same vehicle entity and changes
-  its physics body to kinematic mode. Switching back to **Physics Force** resets
-  that entity again and restores dynamic mode.
+- **Constraint Assisted** is the selected default after the Phase 0 comparison.
+  Selecting either controller resets the same vehicle entity and changes its
+  physics body between kinematic and dynamic mode.
 - Pure calculations integrate forward speed, braking/reverse, coasting, and
   speed-sensitive steering without importing RealityKit.
 - R2 alone accelerates, L2 alone brakes and then reverses, and holding both
@@ -24,8 +24,10 @@
   angled-seam limitation otherwise remains unchanged so both approaches can be
   compared on the same baseline.
 
-This is a Phase 0 comparison prototype. It does not choose the production
-controller, add wheel or suspension simulation, implement checkpoints or lap
+This remains a Phase 0 comparison prototype. The decision to carry Constraint
+Assisted into Phase 1 is recorded in
+[`ADR-0003`](../ArchitectureDecisions/0003-use-constraint-assisted-vehicle-controller.md).
+It does not add wheel or suspension simulation, implement checkpoints or lap
 timing, or resolve the underlying static-mesh seam behavior for dynamic bodies.
 
 ## Automated verification
@@ -46,9 +48,9 @@ Testing coverage verifies:
 
 ## Simulator smoke check
 
-- [x] Enter Track Preview and confirm the HUD reports **Physics Force**.
+- [x] Enter Track Preview and confirm the HUD reports **Constraint Assisted**.
 - [x] Select **Switch Controller** and confirm the HUD reports
-      **Constraint Assisted** after one controller-change reset.
+      **Physics Force** after one controller-change reset.
 - [x] Hold R2 and confirm the vehicle accelerates rather than remaining at the
       start pose.
 - [x] Hold R2 while steering and confirm heading and speed update together.
@@ -64,7 +66,8 @@ Testing coverage verifies:
 
 ## Physical Apple Vision Pro and DualSense check
 
-- [x] Repeat the simulator smoke check on the recorded visionOS 26.5 device.
+- [x] Repeat the updated simulator smoke check on the recorded visionOS 26.5
+      device.
 - [x] Sweep gaze across the vehicle, both track halves, oval center, and course
       margin while accelerating and steering. Confirm input remains active.
 - [x] Compare acceleration, braking, reverse, and low/high-speed steering with
@@ -82,8 +85,8 @@ Testing coverage verifies:
       lost-surface recovery restores the stable start pose.
 - [x] Complete three consecutive controlled loops within 120 seconds without a
       manual reset, unintended yaw change, seam-related stop, or loss of input.
-- [x] Repeat the three-loop run with **Physics Force** under the same conditions
-      if the angled-seam limitation permits it.
+- [x] Attempt the same three-loop run with **Physics Force** and record whether
+      the angled-seam limitation prevents reliable completion.
 
 ## Comparison record
 
@@ -97,7 +100,7 @@ Record physical results before changing either controller's tuning.
 | Straight seam reliability | Passed | Passed |
 | Angled seam reliability | Failed: yaw and near-zero speed | Passed |
 | Off-track recovery | Passed | Passed |
-| Three consecutive loops | Passed | Passed |
+| Three consecutive loops | Not reliable: angled-seam issue | Passed |
 | Typical HUD update time | Passed | Passed |
 
 Capture the adjacent piece names, approach direction, approximate HUD speed,

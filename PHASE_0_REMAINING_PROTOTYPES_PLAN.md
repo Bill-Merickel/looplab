@@ -151,11 +151,11 @@ and replay-consistency risks.
 
 Create short architecture decisions for:
 
-- window, volume, and immersive-space responsibilities;
-- tabletop scale and maximum footprint;
-- fixed versus variable simulation timing;
-- the selected vehicle-controller approach; and
-- the socket and collision authoring contract.
+- [window, volume, and immersive-space responsibilities](Docs/ArchitectureDecisions/0001-use-tabletop-mixed-immersive-presentation.md);
+- [tabletop scale and maximum footprint](Docs/ArchitectureDecisions/0004-defer-maximum-track-footprint.md), formally deferred beyond Phase 0;
+- [fixed versus variable simulation timing](Docs/ArchitectureDecisions/0005-defer-simulation-step-selection.md), formally deferred until lap and replay measurement;
+- [the selected vehicle-controller approach](Docs/ArchitectureDecisions/0003-use-constraint-assisted-vehicle-controller.md); and
+- [the socket and collision authoring contract](Docs/ArchitectureDecisions/0002-use-domain-authored-track-pieces.md).
 
 ## Verification policy
 
@@ -169,15 +169,21 @@ spatial feel and RealityKit integration on actual hardware.
 
 ## Final Phase 0 exit check
 
-- [ ] All prototype branches are merged and `main` is clean.
-- [ ] The documented build and all focused tests pass.
-- [ ] Both controllers were evaluated on the same device, loop, and input
+- [x] All implementation prototype branches were merged into `main` before
+      this final decision branch was created.
+- [x] The documented build and all focused tests pass.
+- [x] Both controllers were evaluated on the same device, loop, and input
       configuration.
-- [ ] The selected controller completes three consecutive loop traversals
+- [x] The selected controller completes three consecutive loop traversals
       without a seam-induced catch, launch, or reset.
-- [ ] DualSense connect, disconnect, and reconnect succeed three times without
+- [x] DualSense connect, disconnect, and reconnect succeed three times without
       stuck input.
-- [ ] A ten-minute seated session is comfortable at the selected scale.
-- [ ] Steering, throttle, and braking latency are acceptable.
-- [ ] Required architecture decisions and environment versions are recorded.
-- [ ] No out-of-scope production or online feature was added.
+- [x] A ten-minute seated session is comfortable at the selected scale.
+- [x] Steering, throttle, and braking latency are acceptable.
+- [x] Required architecture decisions and environment versions are recorded.
+- [x] No out-of-scope production or online feature was added.
+
+After this final decision PR is merged, switch to `main`, pull the merged
+changes, and confirm the worktree is clean before creating the Phase 1 branch.
+This post-merge repository check does not require another documentation-only
+commit.

@@ -34,7 +34,8 @@ final class VehicleHarnessSession {
         timingConfiguration: VehicleTimingConfiguration = Phase0VehicleComparison.timing,
         recoveryPolicy: VehicleRecoveryPolicy = Phase0VehicleComparison.recovery,
         controllers: [any VehicleController]? = nil,
-        activeController: VehicleControllerKind = .physicsForce
+        activeController: VehicleControllerKind = Phase0VehicleComparison
+            .selectedController
     ) {
         precondition(configuration.hasValidValues)
         precondition(recoveryPolicy.hasValidValues)

@@ -12,7 +12,7 @@ import Testing
 struct VehicleHarnessSessionTests {
     @Test("held reset input produces one edge-triggered reset")
     func resetInputIsEdgeTriggered() {
-        let harness = VehicleHarnessSession()
+        let harness = VehicleHarnessSession(activeController: .physicsForce)
         let state = VehicleState.resting(at: harness.startPose)
         let resetInput = SemanticInputState(reset: true)
 
@@ -39,7 +39,7 @@ struct VehicleHarnessSessionTests {
 
     @Test("controller selection changes only the behavior and requests reset")
     func controllerSelectionRequestsReset() {
-        let harness = VehicleHarnessSession()
+        let harness = VehicleHarnessSession(activeController: .physicsForce)
         let state = VehicleState.resting(at: harness.startPose)
 
         harness.selectNextController()
@@ -55,9 +55,9 @@ struct VehicleHarnessSessionTests {
         #expect(harness.telemetry.resetCount == 1)
     }
 
-    @Test("default constraint controller produces constrained actuation")
+    @Test("selected constraint controller produces constrained actuation")
     func constraintControllerIsActiveAfterSelection() {
-        let harness = VehicleHarnessSession()
+        let harness = VehicleHarnessSession(activeController: .physicsForce)
         let surface = VehicleSurfaceSample(
             isGrounded: true,
             distance: Phase0VehicleComparison.constraintAssisted.rideHeight,
@@ -133,7 +133,24 @@ struct VehicleHarnessSessionTests {
         #expect(harness.telemetry.isGrounded)
         #expect(harness.telemetry.contactCount == 2)
         #expect(harness.telemetry.input == input)
-        #expect(harness.telemetry.activeController == .physicsForce)
+        #expect(
+            harness.telemetry.activeController
+                == Phase0VehicleComparison.selectedController
+        )
+    }
+
+    @Test("completed Phase 0 comparison selects the default controller")
+    func selectedControllerIsDefault() {
+        let harness = VehicleHarnessSession()
+
+        #expect(
+            Phase0VehicleComparison.selectedController
+                == .constraintAssisted
+        )
+        #expect(
+            harness.activeController
+                == Phase0VehicleComparison.selectedController
+        )
     }
 
     @Test("contact tracking cannot become negative")
