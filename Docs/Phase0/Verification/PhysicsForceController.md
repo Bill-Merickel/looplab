@@ -33,7 +33,8 @@ animation, race rules, checkpoints, final vehicle art, or production effects.
 
 ## Automated verification
 
-Run the exact build and test commands documented in `AGENTS.md`. Focused Swift
+Run the exact build and test commands documented in
+[`AGENTS.md`](../../../AGENTS.md). Focused Swift
 Testing coverage verifies:
 
 - surface-sample validation and normalization;

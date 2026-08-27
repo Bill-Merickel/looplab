@@ -31,17 +31,17 @@ Updated: 2026-07-23
 - Drive-surface collision is generated from domain geometry recipes. Automated
   checks cover loop topology, collision configuration, and seam tolerances;
   physical-device motion acceptance is recorded in
-  [`CollisionLoopVerification.md`](CollisionLoopVerification.md).
+  [collision-loop verification](Verification/CollisionLoop.md).
 - GameController discovery and explicit DualSense mappings are implemented
   behind the semantic input boundary. Automated checks cover dead zones,
   clamping, connection transitions, and stuck-input prevention. Physical input
   delivery, gaze coverage, reconnection, and perceived latency are verified in
-  [`DualSenseVerification.md`](DualSenseVerification.md).
+  [DualSense verification](Verification/DualSense.md).
 - The shared vehicle harness keeps controller input, configuration, timing,
   recovery, presentation, and instrumentation constant while swapping the two
   Phase 0 controller approaches. Its repeatable comparison configuration and
   smoke checks are recorded in
-  [`VehicleHarnessVerification.md`](VehicleHarnessVerification.md).
+  [vehicle-harness verification](Verification/VehicleHarness.md).
 
 ## Recorded outcomes
 
@@ -56,5 +56,5 @@ Updated: 2026-07-23
   defer the supported maximum footprint until editor and device profiling.
 - [`ADR-0005`](../ArchitectureDecisions/0005-defer-simulation-step-selection.md):
   defer fixed-versus-variable timing until lap and replay measurement.
-- [`Phase0Completion.md`](Phase0Completion.md) records the satisfied exit
+- The [Phase 0 completion record](README.md) records the satisfied exit
   criteria, known limitations, and deferred work.

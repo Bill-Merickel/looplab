@@ -39,5 +39,6 @@ remains deferred until replay and lap-timing prototypes can measure it.
       remains visible in the harness HUD.
 
 Actual driving and three-loop comparison results are recorded in
-`ConstraintAssistedControllerVerification.md` now that Steps 5 and 6 provide
+[`ConstraintAssistedController.md`](ConstraintAssistedController.md) now that
+Steps 5 and 6 provide
 both controller implementations.
