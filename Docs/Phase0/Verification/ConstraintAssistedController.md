@@ -26,13 +26,14 @@
 
 This remains a Phase 0 comparison prototype. The decision to carry Constraint
 Assisted into Phase 1 is recorded in
-[`ADR-0003`](../ArchitectureDecisions/0003-use-constraint-assisted-vehicle-controller.md).
+[`ADR-0003`](../../ArchitectureDecisions/0003-use-constraint-assisted-vehicle-controller.md).
 It does not add wheel or suspension simulation, implement checkpoints or lap
 timing, or resolve the underlying static-mesh seam behavior for dynamic bodies.
 
 ## Automated verification
 
-Run the exact build and test commands documented in `AGENTS.md`. Focused Swift
+Run the exact build and test commands documented in
+[`AGENTS.md`](../../../AGENTS.md). Focused Swift
 Testing coverage verifies:
 
 - forward acceleration and maximum speed;

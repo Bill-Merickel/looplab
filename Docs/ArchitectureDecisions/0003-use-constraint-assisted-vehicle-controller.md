@@ -72,6 +72,6 @@ production simulation-step choice is a separate decision formally deferred in
 
 ## Evidence
 
-- [Physics-force verification](../Phase0/PhysicsForceControllerVerification.md)
-- [Constraint-assisted verification](../Phase0/ConstraintAssistedControllerVerification.md)
-- [Shared comparison harness](../Phase0/VehicleHarnessVerification.md)
+- [Physics-force verification](../Phase0/Verification/PhysicsForceController.md)
+- [Constraint-assisted verification](../Phase0/Verification/ConstraintAssistedController.md)
+- [Shared comparison harness](../Phase0/Verification/VehicleHarness.md)

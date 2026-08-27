@@ -558,7 +558,7 @@ Add a developer HUD showing frame rate, physics time, entity count, active conta
 ### Phase 0 — Discovery and technical prototypes
 
 Completion and verification evidence is recorded in
-[`Docs/Phase0/Phase0Completion.md`](Docs/Phase0/Phase0Completion.md).
+[`Docs/Phase0/README.md`](Docs/Phase0/README.md).
 
 Deliver:
 

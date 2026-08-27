@@ -1,5 +1,7 @@
 # Phase 0 foundation implementation plan
 
+> Status: Completed; retained as a historical implementation record.
+
 ## Outcome
 
 Deliver a small, offline visionOS foundation that:
@@ -165,7 +167,8 @@ test.
 3. Add the procedural entity factory and gray-box sample layout.
 4. Replace placeholder asset loading with the generated root entity.
 5. Refine the immersive state machine and home action, then add state tests.
-6. Run the exact build and test commands in `AGENTS.md`.
+6. Run the exact build and test commands in
+   [`AGENTS.md`](../../../AGENTS.md).
 7. Launch in the Apple Vision Pro simulator and manually verify:
    - the window appears with the entry action;
    - the action opens the mixed immersive space;

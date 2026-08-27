@@ -1,5 +1,7 @@
 # Phase 0 remaining technical prototypes plan
 
+> Status: Completed; retained as a historical implementation record.
+
 ## Outcome
 
 Complete the work that remains after the Phase 0 foundation:
@@ -19,7 +21,7 @@ DualSense provides acceptable control latency.
 The merged foundation provides the window-to-immersive-space flow,
 renderer-independent track and socket definitions, three procedural gray-box
 pieces, a tabletop preview, focused tests, and reproducible commands in
-`AGENTS.md`.
+[`AGENTS.md`](../../../AGENTS.md).
 
 ## Constraints
 
@@ -39,7 +41,8 @@ pieces, a tabletop preview, focused tests, and reproducible commands in
 
 Before feature work, add a short discovery note that:
 
-- links to the product vision and experience flow in `plan.md`;
+- links to the product vision and experience flow in
+  [`plan.md`](../../../plan.md);
 - confirms mixed immersive space and tabletop scale as the baseline;
 - records Xcode, Swift, visionOS SDK, device OS, and DualSense versions;
 - confirms the physical device and controller are available for exit testing;
@@ -151,16 +154,17 @@ and replay-consistency risks.
 
 Create short architecture decisions for:
 
-- [window, volume, and immersive-space responsibilities](Docs/ArchitectureDecisions/0001-use-tabletop-mixed-immersive-presentation.md);
-- [tabletop scale and maximum footprint](Docs/ArchitectureDecisions/0004-defer-maximum-track-footprint.md), formally deferred beyond Phase 0;
-- [fixed versus variable simulation timing](Docs/ArchitectureDecisions/0005-defer-simulation-step-selection.md), formally deferred until lap and replay measurement;
-- [the selected vehicle-controller approach](Docs/ArchitectureDecisions/0003-use-constraint-assisted-vehicle-controller.md); and
-- [the socket and collision authoring contract](Docs/ArchitectureDecisions/0002-use-domain-authored-track-pieces.md).
+- [window, volume, and immersive-space responsibilities](../../ArchitectureDecisions/0001-use-tabletop-mixed-immersive-presentation.md);
+- [tabletop scale and maximum footprint](../../ArchitectureDecisions/0004-defer-maximum-track-footprint.md), formally deferred beyond Phase 0;
+- [fixed versus variable simulation timing](../../ArchitectureDecisions/0005-defer-simulation-step-selection.md), formally deferred until lap and replay measurement;
+- [the selected vehicle-controller approach](../../ArchitectureDecisions/0003-use-constraint-assisted-vehicle-controller.md); and
+- [the socket and collision authoring contract](../../ArchitectureDecisions/0002-use-domain-authored-track-pieces.md).
 
 ## Verification policy
 
 Every implementation PR must add focused tests for new domain or state
-behavior, run the exact build and simulator-test commands in `AGENTS.md`, and
+behavior, run the exact build and simulator-test commands in
+[`AGENTS.md`](../../../AGENTS.md), and
 record relevant simulator and physical-device smoke checks.
 
 Do not add tests merely to maximize coverage. Test calculations, contracts,
@@ -183,7 +187,6 @@ spatial feel and RealityKit integration on actual hardware.
 - [x] Required architecture decisions and environment versions are recorded.
 - [x] No out-of-scope production or online feature was added.
 
-After this final decision PR is merged, switch to `main`, pull the merged
-changes, and confirm the worktree is clean before creating the Phase 1 branch.
-This post-merge repository check does not require another documentation-only
-commit.
+This checklist records the completed Phase 0 exit state. Current completion
+evidence and follow-on work are summarized in the
+[Phase 0 record](../README.md).

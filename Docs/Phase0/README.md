@@ -1,8 +1,24 @@
-# Phase 0 completion record
+# Phase 0 — Discovery and technical prototypes
 
-- Status: Ready for final Phase 0 decision PR
+- Status: Complete
 - Date: 2026-08-26
 - Device baseline: Apple Vision Pro, visionOS 26.5, DualSense
+
+This directory preserves the Phase 0 plans, discovery record, verification
+checklists, and completion evidence. The resulting architecture choices remain
+in the repository-wide
+[architecture decision records](../ArchitectureDecisions/README.md).
+
+## Documentation
+
+- [Foundation implementation plan](Plans/FoundationImplementation.md)
+- [Remaining technical prototypes plan](Plans/RemainingPrototypes.md)
+- [Discovery record](Discovery.md)
+- [Collision-loop verification](Verification/CollisionLoop.md)
+- [DualSense verification](Verification/DualSense.md)
+- [Shared vehicle-harness verification](Verification/VehicleHarness.md)
+- [Physics-force controller verification](Verification/PhysicsForceController.md)
+- [Constraint-assisted controller verification](Verification/ConstraintAssistedController.md)
 
 ## Deliverables
 
@@ -11,11 +27,11 @@
 | Product, SDK, device, and spatial baseline | [Discovery record](Discovery.md) |
 | SwiftUI window-to-immersive-space flow | [ADR-0001](../ArchitectureDecisions/0001-use-tabletop-mixed-immersive-presentation.md) |
 | Renderer-independent pieces and exact socket snapping | [ADR-0002](../ArchitectureDecisions/0002-use-domain-authored-track-pieces.md) |
-| Closed gray-box loop and collision seams | [Collision verification](CollisionLoopVerification.md) |
-| Semantic DualSense input | [DualSense verification](DualSenseVerification.md) |
-| Shared controller comparison harness | [Harness verification](VehicleHarnessVerification.md) |
-| Physics-force controller | [Physics-force verification](PhysicsForceControllerVerification.md) |
-| Constraint-assisted controller | [Constraint verification](ConstraintAssistedControllerVerification.md) |
+| Closed gray-box loop and collision seams | [Collision verification](Verification/CollisionLoop.md) |
+| Semantic DualSense input | [DualSense verification](Verification/DualSense.md) |
+| Shared controller comparison harness | [Harness verification](Verification/VehicleHarness.md) |
+| Physics-force controller | [Physics-force verification](Verification/PhysicsForceController.md) |
+| Constraint-assisted controller | [Constraint verification](Verification/ConstraintAssistedController.md) |
 | Selected vehicle approach | [ADR-0003](../ArchitectureDecisions/0003-use-constraint-assisted-vehicle-controller.md) |
 
 ## Exit criteria
@@ -76,6 +92,5 @@ failures or skips.
 - Final artwork, complete vehicle physics, checkpoints, lap timing, persistence,
   and online services remain outside Phase 0.
 
-After this decision branch is merged and `main` is clean, Phase 1 can begin with
-the selected spatial, track-authoring, collision, input, and vehicle foundations
-without further Phase 0 prototype work.
+Phase 0 is complete. Phase 1 can begin from a clean `main` branch with the
+selected spatial, track-authoring, collision, input, and vehicle foundations.
